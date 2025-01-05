@@ -51,7 +51,7 @@ def main():
     # Adds a part to the current robot link
 
 
-    def addPart(occurrence, matrix):
+    def addPart(occurrence, matrix, link_name=""):
         part = occurrence['instance']
 
         if part['suppressed']:
@@ -79,7 +79,7 @@ def main():
         if partIsIgnore(justPart):
             stlFile = None
         else:
-            stlFile = prefix.replace('/', '_')+'.stl'
+            stlFile = tlFile = link_name + "_" + prefix.replace('/', '_')+'.stl'
             # shorten the configuration to a maximum number of chars to prevent errors. Necessary for standard parts like screws
             if len(part['configuration']) > 40:
                 shortend_configuration = hashlib.md5(
@@ -91,7 +91,7 @@ def main():
             with open(config['outputDirectory']+'/'+stlFile, 'wb') as stream:
                 stream.write(stl)
 
-            stlMetadata = prefix.replace('/', '_')+'.part'
+            stlMetadata = link_name + "_" + prefix.replace('/', '_')+'.part'
             with open(config['outputDirectory']+'/'+stlMetadata, 'w', encoding="utf-8") as stream:
                 json.dump(part, stream, indent=4, sort_keys=True)
 
