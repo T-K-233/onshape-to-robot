@@ -101,9 +101,14 @@ def main():
         shapes = None
         if config['useScads']:
             scadFile = prefix+'.scad'
-            if os.path.exists(config['outputDirectory']+'/'+scadFile):
-                shapes = csg.process(
-                    config['outputDirectory']+'/'+scadFile, config['pureShapeDilatation'])
+            
+            # create empty scad file if it does not exist
+            if not os.path.exists(config['outputDirectory']+'/'+scadFile):
+                print(Fore.YELLOW + 'WARNING: SCAD file ' + scadFile + ' does not exist, creating empty file' + Style.RESET_ALL)
+                with open(config['outputDirectory']+'/'+scadFile, 'w', encoding="utf-8") as stream:
+                    stream.write("")
+            shapes = csg.process(config['outputDirectory']+'/'+scadFile, config['pureShapeDilatation'])
+
 
         # Obtain metadatas about part to retrieve color
         if config['color'] is not None:
@@ -207,7 +212,7 @@ def main():
         robot.startLink(link, matrix)
         for occurrence in occurrences.values():
             if occurrence['assignation'] == tree['id'] and occurrence['instance']['type'] == 'Part':
-                addPart(occurrence, matrix)
+                addPart(occurrence, matrix, link)
         robot.endLink()
 
         # Adding the frames (linkage is relative to parent)
